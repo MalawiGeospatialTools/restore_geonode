@@ -1,0 +1,49 @@
+- hosts: node1
+  sudo: yes
+  gather_facts: no
+  remote_user: vagrant
+
+  tasks:
+  - name: install ssh key
+    authorized_key: user=vagrant key={{ item }}
+    with_file:
+     - .ssh/id_rsa.pub
+
+- hosts: node1
+  sudo: yes
+  gather_facts: no
+  vars_files:
+    -  ansible_variables.yml
+
+  tasks:
+    # Pause for 4 minutes to make sure vagrant does not hold apt lock.
+    - pause:
+        minutes: 4
+    - name: add geonode repo
+      apt_repository:
+        repo: 'ppa:geonode/stable'
+        state: present
+    - name: Install apt packages.
+      apt:
+        name: '{{ item }}'
+        state: present
+        update_cache: true
+      with_items:
+        - python-setuptools
+        - geonode
+
+    - name: easy_install pexpect module
+      easy_install: name=pexpect state=latest
+
+    - expect:
+        command: geonode createsuperuser
+        responses:
+          (?i)username: '{{ geonode_super_usr }}'
+          (?i)email: '{{ geonode_super_usr_email }}'
+          (?i)password: '{{ geonode_super_usr_pwd }}'
+    - name: geonode updateip
+      command: sudo geonode-updateip {{ node_ip }}
+    - name: geonode startproject
+      command: django-admin.py startproject masdap --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst
+    - name: Go to the folder and execute command
+      command: chdir=/home/vagrant/masdap sudo pip install -e .

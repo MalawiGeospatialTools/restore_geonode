@@ -1,0 +1,8 @@
+# set your geonode superuser variables
+geonode_super_usr: <super_user-name>
+geonode_super_usr_email: <super_user_email>
+geonode_super_usr_pwd: <super_user_pwd>
+
+# IP address
+# the address must be the same set in Vagrantfile [line 26: node1_config.vm.network :private_network, ip: "10.0.15.11"]
+node_ip: 10.0.15.11
