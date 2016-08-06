@@ -10,7 +10,7 @@
 1. Open a terminal tab at the location where you want to clone the project and run:
 
   ```
-  $ git clone https://github.com/fargalaxy1/restore_geo.git
+  $ git clone https://github.com/MalawiGeospatialTools/restore_geonode.git
   ```
 
 2. Initialize Vagrant:
